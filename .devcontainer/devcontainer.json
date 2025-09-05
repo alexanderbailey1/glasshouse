@@ -1,0 +1,13 @@
+{
+  "name": "GlassHouse",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    }
+  },
+  "forwardPorts": [3000,8000,5432],
+  "postCreateCommand": "pip install -r services/reason/requirements.txt && cd apps/portal && npm install",
+  "postStartCommand": "docker compose up -d"
+}

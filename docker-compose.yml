@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: glasshouse
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  reason:
+    build: ./services/reason
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/glasshouse
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  anchoring:
+    build: ./services/anchoring
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/glasshouse
+    depends_on:
+      - db
+
+  portal:
+    build: ./apps/portal
+    environment:
+      NEXT_PUBLIC_REASON_API: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - reason
+
+volumes:
+  db-data:
